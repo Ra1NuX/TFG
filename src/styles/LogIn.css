@@ -1,0 +1,42 @@
+input {
+    display: block;
+    border: 0;
+    border-bottom: 2px solid rgba(20, 114, 255, 0.342);
+    padding: 10px;
+    padding-bottom: 8px;
+    border-radius: 1px;
+    width: 15rem;
+    margin-bottom: 10px;
+}
+
+input:last-of-type {
+    align-self: center;
+    margin-bottom: 0;
+    background-color: rgb(32, 96, 190);
+    font-weight: bold;
+    color: white;
+    margin: auto;
+    border-radius: 2px;
+    border: 0;
+    margin-bottom: 10px;
+}
+
+#errorMessage {
+    display: none;
+}
+
+input:last-of-type:hover {
+
+    background-color: rgb(22, 81, 170);
+    cursor: pointer
+}
+
+.formDiv {
+    padding: 25px;
+    border-radius: 5px;
+    background-color: rgba(80, 80, 80, 0.301);
+}
+
+a {
+    color: white
+}

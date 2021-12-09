@@ -1,0 +1,47 @@
+button {
+    border: 0;
+    padding: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.13);
+    background-color: transparent;
+    text-align: left;
+    cursor: pointer;
+    color: #adadad
+}
+
+button:hover {
+    background-color: rgba(146, 146, 146, 0.089);
+
+}
+
+.Dark {
+    background-color: rgba(0, 0, 0, 0.295);
+}
+
+.sidebarList>li>* {
+    display: block;
+    text-decoration: none;
+    padding: 5px;
+    padding-left: 2em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #fafafa
+}
+
+.sidebarList {
+    padding: 0
+}
+
+.sidebarList>li {
+    list-style: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+}
+
+.sidebarList>li:hover {
+    background-color: rgba(255, 255, 255, 0.11);
+}
+
+.sidebarList>li:last-of-type {
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}

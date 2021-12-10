@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router"
 import Dashboard from "./dashboard"
 import Chat from "./Chat"
+import Calendar from "./Calendar"
 
 export default function Content({...props}) {
     const {size} = props 
@@ -8,6 +9,8 @@ export default function Content({...props}) {
             <Routes>
                 <Route path="/chat" element={<Chat/>}/>
                 <Route path="/dashboard" element={<Dashboard/>}/>
+                <Route path="/calendar" element={<Calendar />}/>
+                <Route path="/drive" element={<Calendar />}/>
                 <Route path="/" element={<Navigate to="/dashboard"/>}/>
                 <Route path="*" element={<div>Esto es un error</div>} />
             </Routes>

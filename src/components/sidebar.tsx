@@ -19,6 +19,8 @@ export default function Sidebar({...props}){
             <ul className="sidebarList">
                 <li><Link to="/dashboard">Profile</Link></li>
                 <li><Link to="/chat">Chat</Link></li>
+                <li><Link to="/calendar">Calendario</Link></li>
+                <li><Link to="/drive">Cajón</Link></li>
             </ul>
         
         </div>

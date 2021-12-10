@@ -24,7 +24,9 @@ button:hover {
     padding-left: 2em;
     padding-top: 10px;
     padding-bottom: 10px;
-    color: #fafafa
+    color: #fafafa;
+    
+    border-radius: 0 10px 10px 0;
 }
 
 .sidebarList {
@@ -33,8 +35,10 @@ button:hover {
 
 .sidebarList>li {
     list-style: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 7px;
+    background-color:rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0 10px 10px 0;
+    margin: 2px;
 }
 
 .sidebarList>li:hover {

@@ -9,9 +9,27 @@ input {
     margin-bottom: 10px;
 }
 
-input:last-of-type {
+button#loginSubmit {
+    display: block;
+    padding: 10px;
+    padding-bottom: 8px;
+    width: 15rem;
     align-self: center;
-    margin-bottom: 0;
+    background-color: rgb(32, 96, 190);
+    font-weight: bold;
+    color: white;
+    margin: auto;
+    border-radius: 2px;
+    border: 0;
+    margin-bottom: 10px;
+}
+
+.formSubmit {
+    display: block;
+    padding: 10px;
+    padding-bottom: 8px;
+    width: 15rem;
+    align-self: center;
     background-color: rgb(32, 96, 190);
     font-weight: bold;
     color: white;
@@ -22,10 +40,17 @@ input:last-of-type {
 }
 
 #errorMessage {
-    display: none;
+    visibility: hidden;
+    color: brown;
 }
 
-input:last-of-type:hover {
+button#loginSubmit:hover {
+
+    background-color: rgb(22, 81, 170);
+    cursor: pointer
+}
+
+.formSubmit:hover {
 
     background-color: rgb(22, 81, 170);
     cursor: pointer

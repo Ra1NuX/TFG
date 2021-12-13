@@ -27,9 +27,8 @@ export default function Sidebar({...props}){
         
         
         <div style={{position: "absolute", bottom: 0, fontFamily: "Poppins"}}>
-            
-            <button className={isLight} onClick={() => console.log("Configuracion")} style={{width: size}}>Configuración</button>
-            <button className={isLight} onClick={() => signOut(auth)} style={{width: size}}>Sign Out</button>
+            <button className={isLight+ " sidebar"} onClick={() => console.log("Configuracion")} style={{width: size}}>Configuración</button>
+            <button className={isLight + " sidebar"} onClick={() => {signOut(auth); location.href = "./"}} style={{width: size}}>Sign Out</button>
         </div>
     </div>
 }

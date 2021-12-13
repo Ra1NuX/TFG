@@ -1,5 +1,6 @@
+import {getStorage} from "firebase/storage"
 import {initializeApp} from "firebase/app";
-import {getAuth} from 'firebase/auth'
+import {getAuth} from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyB9Esun1j-uTBUU4TDv5LJDZUrQRkGnX5I",
@@ -8,10 +9,11 @@ const firebaseConfig = {
     storageBucket: "bbdd-tfg-ec27a.appspot.com",
     messagingSenderId: "739311376686",
     appId: "1:739311376686:web:3d53838a76b1074bedc2bf"
-  };
+};
 
 initializeApp(firebaseConfig);
 
 const auth = getAuth();
+const storage = getStorage();
 
-export { auth }
+export { auth, storage}

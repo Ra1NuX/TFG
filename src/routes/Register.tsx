@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Link } from "react-router-dom"
 import LightContext from "../lightContext";
 
-import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth'
+import {createUserWithEmailAndPassword, updateProfile, sendEmailVerification} from 'firebase/auth'
 
 import '../default.css';
 import "../lightmode.css";
@@ -29,7 +29,9 @@ export default function Register() {
 
         createUserWithEmailAndPassword(auth, email.value, pass.value)
         .then(credential => {
+            sendEmailVerification(credential.user,).then(e => {
             updateProfile(credential.user, {displayName: username.value})
+            })
         })
 
         // signInWithEmailAndPassword(auth, username.value, pass.value)
@@ -65,7 +67,7 @@ export default function Register() {
                     {/* <label htmlFor="pass">Contraseña: </label> */}
                     <input type="password" name="pass" id="pass" placeholder="Contraseña"/>
                     <input type="password" name="pass2" id="pass2" placeholder="Repite la contraseña"/>
-                    <input type="submit" value="Registrarse" />
+                    <button className="formSubmit" type="submit" >Regitrar</button>
                 </form>
             </div>
         </div>

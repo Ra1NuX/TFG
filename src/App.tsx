@@ -5,6 +5,8 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import {VscChromeMaximize} from 'react-icons/vsc'
 import LigthContext from './lightContext';
 
+import { SyncLoader } from 'react-spinners';
+
 import {auth} from './firebase';
 import { onAuthStateChanged } from '@firebase/auth';
 
@@ -13,6 +15,7 @@ import "./lightmode.css";
 import Main from "./routes/Main"
 import LogIn from "./routes/login"
 import Register from "./routes/Register"
+import VerifyEmail from './routes/verify'
 
 
 declare global {
@@ -33,7 +36,9 @@ else{
 function App() {
   const [FullScreen, setFullScreen] = useState(false);
   const [isLight, setIsLight] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isLoggedIn, setIsLogedIn] = useState(false);
+
 
 
 
@@ -41,10 +46,9 @@ function App() {
   useEffect(()=> {
     setFullScreen(isFullScreen())
     onAuthStateChanged(auth, (user => {
+      setIsLoading(false);
       if(user != null){
         setIsLogedIn(true);
-      }else{
-        setIsLogedIn(false)
       }
     }))
 
@@ -87,14 +91,24 @@ function App() {
        return <></> 
       }
   }
-  return (
+  return isLoading 
+  
+  ? <div className={light()} id="main">
+      {titleBar()}
+      <div className={fs() +" "+ light()}> 
+      <div className={light()} style={{display: "flex",flexDirection:"column", height: "100vh", justifyContent:'center', alignItems:'center'}}>
+      <SyncLoader/>
+      </div>
+      </div>
+    </div>  
+  :
     <div className={light()} id="main">
       {titleBar()}
       <div className={fs() +" "+ light()}>
       <LigthContext.Provider value={light()}> 
        <HashRouter>
           <Routes>
-            <Route path="/*" element={ !isLoggedIn ? <Navigate to="login" /> : <Main /> } />
+            <Route path="/*" element={ !isLoggedIn ? <Navigate to="login" /> : !auth.currentUser?.emailVerified ? <VerifyEmail/> : <Main/> } />
             <Route path="login" element={ isLoggedIn ? <Navigate to="/" /> : <LogIn /> } />
             <Route path="register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
           </Routes>
@@ -102,7 +116,7 @@ function App() {
         </LigthContext.Provider>
       </div>
     </div>
-  )
+  
 }
 
 export default App

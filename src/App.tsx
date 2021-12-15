@@ -95,16 +95,16 @@ function App() {
   
   ? <div className={light()} id="main">
       {titleBar()}
-      <div className={fs() +" "+ light()}> 
-      <div className={light()} style={{display: "flex",flexDirection:"column", height: "100vh", justifyContent:'center', alignItems:'center'}}>
+      <div className={fs() +" bg"+ light()}> 
+      <div className={"bg" + light()} style={{display: "flex",flexDirection:"column", height: "100vh", justifyContent:'center', alignItems:'center'}}>
       <SyncLoader/>
       </div>
       </div>
     </div>  
   :
-    <div className={light()} id="main">
+    <div className={"bg" + light()} id="main">
       {titleBar()}
-      <div className={fs() +" "+ light()}>
+      <div className={fs() +" bg"+ light()}>
       <LigthContext.Provider value={light()}> 
        <HashRouter>
           <Routes>

@@ -69,6 +69,8 @@ export default function Register() {
                     <input type="password" name="pass2" id="pass2" placeholder="Repite la contraseña"/>
                     <button className="formSubmit" type="submit" >Regitrar</button>
                 </form>
+                <div style={{margin: "auto", textAlign:"center"}}> - o - </div>
+                    <Link to="/login">Inicia Sesión</Link>
             </div>
         </div>
     }

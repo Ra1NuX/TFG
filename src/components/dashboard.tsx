@@ -8,14 +8,13 @@ import "../styles/dashboard.css"
 
 
 
-
-
-
 export default function Dashboard({...props}){
 
    
     const [imgURL, setImageURL ] = useState("")
+
     useEffect(() => {
+        console.log(auth.currentUser?.photoURL)
         auth.currentUser?.photoURL == null || auth.currentUser?.photoURL == undefined 
         ? setImageURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png") 
         : setImageURL(auth.currentUser.photoURL) ; 

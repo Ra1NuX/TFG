@@ -1,4 +1,6 @@
-.light {
+
+
+.bglight {
     background-color: #fafafa !important;
     color: #202022;
     ;
@@ -37,3 +39,13 @@ button.ligth {
 button.light:hover {
     background-color: rgba(0, 0, 0, 0.178) !important;
 }
+
+.gSubmit.light{
+    background-color: #414141 !important;
+}
+.gSubmit.light:hover{
+    background-color: #666666 !important;
+    cursor: pointer;
+}
+
+a.light{color:black}

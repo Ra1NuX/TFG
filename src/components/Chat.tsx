@@ -1,8 +1,9 @@
-import { useContext } from "react"
-import DataContext from "../dataContext"
 
-export default function Chat(){
-    const {cursos} = useContext(DataContext)
-    console.log(cursos)
-    return <h1>Chatz</h1>
+export default function Chat({...props}){
+
+    const {courses} = props ; 
+
+    console.log(courses)
+
+    return <h1>Chat</h1>
 }

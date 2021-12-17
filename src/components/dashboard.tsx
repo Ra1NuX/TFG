@@ -5,13 +5,11 @@ import { auth, storage } from "../firebase"
 import { updateProfile } from "@firebase/auth"
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage"
 import "../styles/dashboard.css"
-
-import DataContext from "../dataContext"
-
+    
 
 export default function Dashboard({...props}){
 
-    const {cursos, update} = useContext(DataContext) ; 
+    const {onDataChange} = props
 
    
     const [imgURL, setImageURL ] = useState("")
@@ -36,8 +34,7 @@ export default function Dashboard({...props}){
     }
     const handleData = () => {
         if(data == undefined) return;
-        console.log(cursos)
-        update({cursos:data})
+        onDataChange(data)
     }
 
     useEffect(() => {
@@ -49,7 +46,7 @@ export default function Dashboard({...props}){
         connectToServer()
         handleData();
 
-    },[data])
+    },[])
 
     const handleChangeFoto = async(e:any) => {
         

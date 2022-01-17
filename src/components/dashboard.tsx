@@ -21,7 +21,7 @@ export default function Dashboard({ ...props }) {
             ? setImageURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png")
             : setImageURL(auth.currentUser.photoURL);
 
-        cts("_ma2l4seqi"); // connect to server
+        cts("_p6dqd7wdb"); // connect to server
 
     }, [])
 
@@ -39,9 +39,9 @@ export default function Dashboard({ ...props }) {
     }
 
     function dataCoruses() {
-        return <><input type="text" disabled value={data.roomName}/>
-        <h4>Tutor: </h4>
-        <input type="text" disabled value={"Jhon Doe Doe"} />
+        return <><input type="text" disabled value={data.roomName} />
+            <label>Tutor: </label>
+            <input type="text" disabled value={"Jhon Doe Doe"} />
         </>
     }
 
@@ -54,20 +54,30 @@ export default function Dashboard({ ...props }) {
             <h1>Bienvenido {auth.currentUser?.displayName}</h1>
         </div>
         <h3 className="Group-Title">Información del Curso</h3>
-        <h4>Denominación: </h4>
+        <label>Denominación: </label>
 
         {data == null
             ? "Actualmente no esta cursando ningun curso"
-            :  dataCoruses()
+            : dataCoruses()
         }
 
-        
+
         <h3 className="Group-Title">Información Personal</h3>
-        <h4>Nombre Completo: </h4>
-        <input type="text" disabled value={"Jhon Doe Doe"} />
-        <h4>Edad: </h4>
-        <input type="number" disabled value={18} />
-        <h4>Correo Electronico: </h4>
-        {<input type="email" disabled value={auth.currentUser?.email + ""} />}
+        <div className="row">
+            <div className="group-data">
+                <label>Nombre Completo: </label>
+                <input type="text" id="name" disabled value={auth.currentUser?.displayName + ""} />
+            </div>
+            <div className="group-data">
+                <label>Edad: </label>
+                <input type="number" disabled value={18} />
+            </div>
+        </div>
+        <div className="row">
+            <div className="group-data">
+                <label>Correo Electronico: </label>
+                {<input type="email" disabled value={auth.currentUser?.email + ""} />}
+            </div>
+        </div>
     </div>
 }

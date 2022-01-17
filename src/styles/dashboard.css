@@ -26,3 +26,22 @@
     justify-content: center;
     margin-bottom: 10px;
 }
+.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.group-data{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.group-data input{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.group-data #name{
+    min-width: 80%;
+}

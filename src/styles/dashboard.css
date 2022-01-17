@@ -18,3 +18,11 @@
     border: 1px solid black;
     cursor: pointer;
 }
+
+.Group-Title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}

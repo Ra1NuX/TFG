@@ -21,7 +21,7 @@ export default function Dashboard({ ...props }) {
             ? setImageURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png")
             : setImageURL(auth.currentUser.photoURL);
 
-        cts("_p6dqd7wdb"); // connect to server
+        cts("_ma2l4seqi"); // connect to server
 
     }, [])
 
@@ -39,22 +39,31 @@ export default function Dashboard({ ...props }) {
     }
 
     function dataCoruses() {
-        return <><input type="text" disabled value={data.roomName} />
-            <label>Tutor: </label>
-            <input type="text" disabled value={"Jhon Doe Doe"} />
+        return <>
+            <div className="row">
+                <div className="group-data">
+                    <label>Denominación: </label>
+                    <input type="text" disabled value={data.roomName} />
+                </div>
+            </div>
+            <div className="row">
+                <div className="group-data">
+                    <label>Tutor: </label>
+                    <input type="text" disabled value={"Jhon Doe Doe"} />
+                </div>
+            </div>
         </>
     }
 
 
     const { size } = props
-    return <div>
+    return <div className="dashboard-main">
         <div className="NameAndFoto">
             <input type="file" onChange={(e) => handleChangeFoto(e)} accept={".jpeg, .png, .jpg, .bmp, "} id="openProfilePicEditor" style={{ display: "none" }} />
             <label htmlFor="openProfilePicEditor" ><img src={`${imgURL}`} alt={`Foto de Perfil de ${auth.currentUser?.displayName}`} /></label>
             <h1>Bienvenido {auth.currentUser?.displayName}</h1>
         </div>
         <h3 className="Group-Title">Información del Curso</h3>
-        <label>Denominación: </label>
 
         {data == null
             ? "Actualmente no esta cursando ningun curso"

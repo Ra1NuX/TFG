@@ -16,6 +16,8 @@ export default function Sidebar({...props}){
 
     return <div className={isLight + "Dark"} style={{position: "absolute", top:0 , left: 0, height: "100vh", width: size}}>
         <div style={{position: "absolute", top: 34, fontFamily: "Poppins", width: "100%"}}>
+            <img src={auth.currentUser?.photoURL + ""} alt="" height={90} style={{ width: "auto", height: 90, borderRadius: 150} }/>
+            <div>{auth.currentUser?.displayName}</div>
             <ul className="sidebarList">
                 <li><Link to="/dashboard">Profile</Link></li>
                 <li><Link to="/chat">Chat</Link></li>

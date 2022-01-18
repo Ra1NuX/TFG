@@ -21,7 +21,7 @@ export default function Dashboard({ ...props }) {
             ? setImageURL("https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png")
             : setImageURL(auth.currentUser.photoURL);
 
-        cts("_ma2l4seqi"); // connect to server
+        cts("_p6dqd7wdb"); // connect to server
 
     }, [])
 

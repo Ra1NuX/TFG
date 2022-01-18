@@ -85,7 +85,7 @@ const Calendar_: FC = () => {
       onEventDrop={onEventDrop}
       onEventResize={onEventResize}
       resizable
-      style={{ height: '100vh' }}
+      style={{ height: '92vh', margin: '10px', marginLeft: '5px' }}
     />
   )
 }

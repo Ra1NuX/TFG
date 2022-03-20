@@ -2,45 +2,40 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom"
 import LightContext from "../lightContext";
 
+
 import { BeatLoader } from "react-spinners";
 
-import {signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 
-import '../default.css';
-import "../styles/LogIn.css"
-import "../lightmode.css";
 
-import {auth} from "../firebase" ; 
+import { auth } from "../firebase";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as yup from 'yup'
 
 export default function LogIn() {
-    let [btnText,setBtnText] = useState(<div>Inicia Sesión</div>)
+    let [btnText, setBtnText] = useState(<div>Inicia Sesión</div>)
     const isLight = useContext(LightContext);
 
-    console.log(isLight)
+    const SignInSchema = yup.object().shape({
+        email: yup.string().email("El email debe ser un Email válido").required("El correo no puede estar en blanco"),
 
-    const handleLogIn = (e:any) => {
-        e.preventDefault()
-        const username:any = document.querySelector("#username");
-        const pass:any = document.querySelector("#pass");
-        const errorMessage:any = document.querySelector("#errorMessage");
-        
-        if(!username.value){errorMessage.innerHTML = 'El correo no puede estar vacio'; errorMessage.style.visibility = "visible"  ;return};
-        if(!pass.value) {errorMessage.innerHTML = 'La contraseña no puede estar vacia'; errorMessage.style.visibility = "visible"  ;return};
-        
-        
-        errorMessage.style.visibility = "hidden" ;
-        setBtnText( <BeatLoader size={10} color={"#ffffff"}/> ) 
+        password: yup.string()
+            .required("La contraseña no puede estar en blanco")
+            .min(4, "La contraseña es muy corta, al menos debe tener 4 cm"),
+    });
 
-        signInWithEmailAndPassword(auth, username.value, pass.value)
+    interface LoginProps {
+        email:string,
+        password:string,
+    }
+    const handleLogIn = ({email, password}: LoginProps) => {
+        setBtnText( <BeatLoader size={10} color={"#ffffff"}/> )
+        signInWithEmailAndPassword(auth, email, password)
         .then(credentials => {
-              if(credentials){
-                  console.log("Sing In");
-              }
+            if(!credentials) return;
+            alert('Logged in') 
         })
         .catch(e => {
-            console.log(e.code.includes('email'))
-            errorMessage.innerHTML = e.code
-            errorMessage.style.visibility = "visible" 
             setBtnText(<div>Inicia Sesión</div>)
         })
     }
@@ -48,33 +43,64 @@ export default function LogIn() {
     const LogInWithGoogle = () => {
         const Provider = new GoogleAuthProvider
         signInWithPopup(auth, Provider)
-        .then(() =>
-            console.log("here")
-        )
+            .then(() =>
+                console.log("here")
+            )
     }
 
-    return <div style={{ 
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            flexDirection: "column",
-            height: "90vh"
-        }}>
-            <div className={"formDiv " + isLight + "Dark " + isLight + "shadow" }>
-                <form onSubmit={e => handleLogIn(e)}>
-                    {/* <label htmlFor="username">Usuario:</label> */}
-                    <span id="errorMessage">Usuario o contraseña incorrectas</span>
-                    <input type="email" name="username" id="username" placeholder="example@example.com"/>
-                    {/* <label htmlFor="pass">Contraseña: </label> */}
-                    <input type="password" name="pass" id="pass" placeholder="Contraseña"/>
-                    <button id="loginSubmit">{btnText}</button>
-                </form>
-                    <div style={{margin: "auto", textAlign:"center"}}> - o - </div>
-                    <Link className={isLight} to="/register">Registrate</Link>
-                    <button className={"gSubmit " + isLight} onClick={() => LogInWithGoogle()}>
-                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Logo de google" width={20} height={20} />
-                    </button>
-                    
+    const initialValues = { email: "", password: "" }
+
+    return <Formik initialValues={initialValues} validationSchema={SignInSchema} onSubmit={values => handleLogIn(values)}>
+        {formik => {
+            const { errors, touched, isValid, dirty } = formik;
+            return <div className="flex flex-col w-full max-h-screen align-middle justify-center">
+                <h1 className="text-3xl text-center pt-5">Sign in to continue</h1>
+                <Form className="p-5 w-96 m-auto mt-3 rounded-md shadow-sm shadow-gray-500">
+                    <div className="flex flex-col min-h-[90px]">
+                        <label htmlFor="email">Email</label>
+                        <Field
+                            type="email"
+                            name="email"
+                            id="email"
+                            className={`border-b-2 p-2 rounded-sm py-2 ${errors.email ?
+                                "border-red-600 text-red-600" : "text-gray-400 border-blue-500"}`}
+                        />
+                        <ErrorMessage name="email" component="span" className="text-red-600" />
+                    </div>
+
+                    <div className="flex flex-col min-h-[90px] mb-5">
+                        <label htmlFor="password">Password</label>
+                        <Field
+                            type="password"
+                            name="password"
+                            id="password"
+                            className={`border-b-2 p-2 rounded-sm ${errors.password ?
+                                "border-red-600 text-red-600" : "text-gray-400 border-blue-500"}`}
+                        />
+                        <ErrorMessage
+                            name="password"
+                            component="span"
+                            className="text-red-600"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <button
+                            type="submit"
+                            className={`bg-blue-500 rounded-sm h-10 p-2 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-600 hover:cursor-pointer"}`}
+                            disabled={!(dirty && isValid)}
+                        >
+                           {btnText}
+                        </button>
+                        <span className="m-auto my-4 select-none">O</span>
+                        <span><Link to={'/register'} className="underline hover:text-blue-600">Registrate</Link></span>
+                    </div>
+                </Form>
+                <button className="w-1/3 m-auto flex justify-center p-3 my-5 shadow-md border-2 border-red-600 rounded-md bg-red-600 hover:bg-gray-100" onClick={() => LogInWithGoogle()}>
+                    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Logo de google" width={20} height={20} />
+                </button>
             </div>
-        </div>
-    }
+
+
+        }}
+    </Formik>
+}

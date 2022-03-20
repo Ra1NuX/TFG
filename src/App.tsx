@@ -10,8 +10,8 @@ import { SyncLoader } from 'react-spinners';
 import {auth} from './firebase';
 import { onAuthStateChanged } from '@firebase/auth';
 
-import './default.css';
-import "./lightmode.css";
+// import './default.css';
+// import "./lightmode.css";
 import Main from "./routes/Main"
 import LogIn from "./routes/login"
 import Register from "./routes/Register"

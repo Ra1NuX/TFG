@@ -13,9 +13,9 @@ import { onAuthStateChanged } from '@firebase/auth';
 // import './default.css';
 // import "./lightmode.css";
 import Main from "./routes/Main"
-import LogIn from "./routes/login"
+import LogIn from "./routes/Login"
 import Register from "./routes/Register"
-import VerifyEmail from './routes/verify'
+import VerifyEmail from './routes/Verify'
 
 
 declare global {

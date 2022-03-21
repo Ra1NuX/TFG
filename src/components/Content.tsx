@@ -33,14 +33,14 @@ export default function Content({...props}) {
         }
     }
 
-    return <div style={{marginLeft: size+10 }}>
+    return <div>
             <Routes>
                 <Route path="/chat" element={<Chat courses={data}/>}/>
                 <Route path="/dashboard" element={<Dashboard data={data} cts={connectToServer}/>} />
                 <Route path="/calendar" element={<Calendar courses={data}/>}/>
                 <Route path="/drive" element={<Calendar />}/>
                 <Route path="/" element={<Navigate to="/dashboard"/>}/>
-                <Route path="*" element={<div>Esto es un error</div>} />
+                <Route path="*" element={<Navigate to="/dashboard"/>} />
             </Routes>
     </div>
 

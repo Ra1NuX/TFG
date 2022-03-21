@@ -1,7 +1,5 @@
 
-export default function Chat({...props}){
-
-    const {courses} = props ; 
+export default function Chat({courses}:any){
 
     console.log(courses)
 

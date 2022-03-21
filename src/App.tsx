@@ -23,7 +23,6 @@ declare global {
 }
 let onClose: Function, onMinimize: Function, onMaximize: Function, isFullScreen: Function ;
 
-console.log(typeof window.handler)
 if(typeof window.handler != "undefined") {
   onClose = window.handler.onClose;
   onMinimize = window.handler.onMinimize; 
@@ -75,8 +74,8 @@ function App() {
 // Creating the TitleBar only if the window is not in FullScreen. 
   const titleBar = () => {
     if (!FullScreen){
-      return <div id="title-bar" className={light()+'bar'}>
-        <div id="title" className={light()+'bar'}>{pkg.build.productName}</div>
+      return <div id='title-bar'>
+        <div id="title">{pkg.build.productName}</div>
         <div id="title-bar-btns">
           <button className="lightbtn" style={isLight ? {color: "black"} : {color: "white"}} onClick={() => {handleLight()}}>
             <span>{!isLight ? <BsSunFill/> : <BsMoonStarsFill/>}</span>
@@ -102,9 +101,8 @@ function App() {
       </div>
     </div>  
   :
-    <div className={"bg" + light()} id="main">
+    <div className=' h-screen'>
       {titleBar()}
-      <div className={fs() +" bg"+ light()}>
       <LigthContext.Provider value={light()}> 
        <HashRouter>
           <Routes>
@@ -115,7 +113,6 @@ function App() {
         </HashRouter>
         </LigthContext.Provider>
       </div>
-    </div>
   
 }
 

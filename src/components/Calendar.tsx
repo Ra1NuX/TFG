@@ -15,7 +15,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 
-const Calendar_: FC = () => {
+const Calendar_: FC = ({...props}) => {
   const [events, setEvents] = useState<Event[]>([
     {
       title: 'Learn cool stuff',

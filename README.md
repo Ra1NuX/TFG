@@ -30,16 +30,17 @@ Como mínimo se necesitará un servidor y un ordenador.
 
 ## Tecnologías: 
   ### BackEnd: 
-  >- Nodejs.
-  >- Mongodb.
-  >- HTML, css, js.
-  >- Bootstrap 4.
+  >- Nodejs
+  >- Mongodb
+  >- HTML, css, js
+  >- Bootstrap 4
   
   ### FrontEnd: 
-  >- ReactJS ( react routing ).
-  >- CSS.
-  >- Electron.
+  >- ReactJS ( react routing )
+  >- CSS
+  >- Electron
   >- FireBase ( para el registro de usuarios y el almacenamiento en la nube de sus datos, como profile pics ) 
+  >- TailwindCSS
     
 ## Planificación.
   Aproximadamente creo que puedo tardar unos 3 meses en terminar el proyecto. 

@@ -9,7 +9,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc --noEmit && vite build",
-        "electron": "wait-on tcp:3000 && cross-env IS_DEV=true electron .",
+        "electron": "wait-on tcp:3000 && concurrently -k \"tsc -w\" \"cross-env IS_DEV=true electron .\"",
         "electron:pack": "electron-builder --dir",
         "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"npm run electron\"",
         "electron:builder": "electron-builder",
@@ -17,11 +17,14 @@
         "app_build": "npm run build:electron && npm run electron:builder"
     },
     "dependencies": {
+        "@headlessui/react": "^1.5.0",
+        "custom-electron-titlebar": "^4.1.0",
         "date-fns": "^2.28.0",
         "dotenv": "^10.0.0",
         "electron-is-dev": "^2.0.0",
         "firebase": "^9.6.0",
         "formik": "^2.2.9",
+        "framer-motion": "^6.3.0",
         "install": "^0.13.0",
         "moment": "^2.29.1",
         "npm": "^8.3.1",
@@ -33,12 +36,16 @@
         "react-pro-sidebar": "^0.7.1",
         "react-router-dom": "^6.0.2",
         "react-spinners": "^0.11.0",
+        "socket.io-client": "^4.5.0",
+        "uuid": "^8.3.2",
+        "vite-plugin-electron": "^0.4.1",
         "yup": "^0.32.11"
     },
     "devDependencies": {
         "@types/react": "^17.0.0",
         "@types/react-big-calendar": "^0.36.2",
         "@types/react-dom": "^17.0.0",
+        "@types/uuid": "^8.3.4",
         "@vitejs/plugin-react": "^1.2.0",
         "autoprefixer": "^10.4.4",
         "concurrently": "^6.3.0",

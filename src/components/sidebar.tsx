@@ -1,64 +1,84 @@
 import { auth } from "../firebase"
 import { signOut } from "@firebase/auth"
-
+import { motion } from 'framer-motion'
 import { FaAddressCard, FaCalendarAlt, FaCog, FaComment, FaSignOutAlt } from 'react-icons/fa'
 
-
-// import "../styles/sidebar.css"
-// import "../lightmode.css"
-let FullScreen: boolean = true;
-if (typeof window.handler != "undefined") {
-    FullScreen = window.handler.isFullScreen();
-}
-
-interface SideBarProps {
-    onCourse: boolean,
-}
-
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { ProSidebar, Menu, MenuItem, SubMenu, SidebarContent, SidebarFooter, SidebarHeader } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
+import { BsArrowRightShort } from "react-icons/bs";
+
+import logo from '../public/temporal-logo-dark.svg'
+
+interface SideBarProps {
+    onCourse: boolean,
+    routes: Array<{
+        path: string,
+        name: string,
+        element: React.ReactElement,
+        icon?: React.ReactElement | string,
+        courses?: any,
+        courseRequired?: boolean
+    }>
+}
 
 
 
-
-export default function Sidebar({ onCourse }: SideBarProps) {
+export default function Sidebar({ onCourse, routes }: SideBarProps) {
 
     const [close, setClose] = useState(false)
+    const [uri, setUri] = useState("")
+
+    let selectedLocation = useLocation().pathname
+
+    useEffect(() => {
+        setUri(selectedLocation)
+    }, [selectedLocation])
+
+    console.log(uri)
 
     const handleLogOut = () => {
         if (!confirm('¿Estas seguro que quieres cerrar sesión?')) return;
         signOut(auth);
-        location.href = "./"
-
+        location.reload();
     }
 
-    return <ProSidebar className="" width={200} collapsedWidth={80} collapsed={close}>
+    return <ProSidebar breakPoint="md" width={200} collapsedWidth={80} collapsed={close}>
         <SidebarHeader>
-            <button className="absolute right-0" onClick={() => setClose(!close)}>{close ? <BsArrowRightShort size={"2em"} style={{ marginRight: "-5px", marginTop: "-5px", }} /> : <BsArrowLeftShort size={"2em"} />}</button>
-            <div className="flex">
-                <img src={auth.currentUser?.photoURL + ""} alt="" className="w-10 h-10 rounded-full mx-5 my-2" />
-                <div className="font-semibold text-sm text-center self-center text-ellipsis overflow-hidden mr-1">{auth.currentUser?.displayName}</div>
+        <img src={logo} alt="logo" width={"70%"} />
+            <div className="flex pl-3 my-5 items-center ">
+                {/* <ProfilePic size={35} className="mr-3" /> */}
+                {/* {!close && <div className="font-semibold text-sm text-center self-center text-ellipsis overflow-hidden mr-1">{auth.currentUser?.displayName}</div>} */}
+                
+                
+                <motion.button className="-mr-1" animate={{
+                    rotate: !close ? 180 : 0,
+                    transition: { duration: 0.2 }
+                }} onClick={() => setClose(!close)}>
+                    <BsArrowRightShort size={"2em"}
+                    />
+                </motion.button>
+                
             </div>
         </SidebarHeader>
         <SidebarContent>
             <Menu iconShape="round">
-                <MenuItem icon={<FaAddressCard />}><Link to="/dashboard">Perfil</Link></MenuItem>
-                {onCourse ? () => {
-                    return <>
-                    <MenuItem icon={<FaComment />} ><Link to="/chat">Chat</Link></MenuItem>
-                    <MenuItem icon={<FaCalendarAlt />} ><Link to="/Calendar">Eventos</Link></MenuItem>
-                    </>
-                } : null}
+                {routes.map((route, index) => {
+                    if (!route.courseRequired) {
+                        return <MenuItem active={uri === route.path} className={`menuItem ${close ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
+                    } else {
+                        return !onCourse && <MenuItem active={uri === route.path} className={`menuItem ${close ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
+                    }
+                }
+                )}
             </Menu>
         </SidebarContent>
-        <SidebarFooter>
-            <div className="hover:bg-gray-800 hover:cursor-pointer p-2 text-center" onClick={() => console.log("Configuracion")} >
+        <SidebarFooter className="!border-t-0">
+            <div className="hover:bg-gray-800 hover:cursor-pointer p-2 rounded m-px text-center" onClick={() => console.log("Configuracion")} >
                 <FaCog className="inline mb-1" /> {!close ? "Configuración" : ""}
             </div>
-            <div className="hover:bg-red-800 hover:cursor-pointer p-2 text-red-600 hover:text-white text-center" onClick={() => handleLogOut()}>
+            <div className="hover:bg-red-800 hover:cursor-pointer p-2 rounded m-px text-red-600 hover:text-white text-center" onClick={() => handleLogOut()}>
                 <FaSignOutAlt className="inline mb-1" /> {!close ? "Sign Out" : ""}
             </div>
         </SidebarFooter>

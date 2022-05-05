@@ -1,12 +1,11 @@
 //require all the modules we will use. 
 const electron = require('electron');
-const {ipcMain} = require('electron')
+const { BrowserWindow, ipcMain } = require('electron')
 const path = require('path');
-const isDev = require('electron-is-dev'); 
-require('dotenv').config()
+const isDev= require('electron-is-dev'); 
+require("dotenv").config()
 
 const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
 
@@ -20,7 +19,7 @@ console.log('This application is running in development mode: ', isDev);
       height: 680, 
       minHeight:300,
       minWidth: 400,
-      frame: false,
+      frame:true,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         devTools: isDev ? true : false

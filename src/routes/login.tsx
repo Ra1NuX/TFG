@@ -55,7 +55,7 @@ export default function LogIn() {
             const { errors, touched, isValid, dirty } = formik;
             return <div className="flex flex-col w-full max-h-screen align-middle justify-center">
                 <h1 className="text-3xl text-center pt-5">Sign in to continue</h1>
-                <Form className="p-5 w-96 m-auto mt-3 rounded-md shadow-sm shadow-gray-500">
+                <Form className="p-5 w-full sm:w-96 m-auto mt-3 rounded-md shadow-xl dark-card-bg">
                     <div className="flex flex-col min-h-[90px]">
                         <label htmlFor="email">Email</label>
                         <Field
@@ -86,7 +86,7 @@ export default function LogIn() {
                     <div className="flex flex-col">
                         <button
                             type="submit"
-                            className={`bg-blue-500 rounded-sm h-10 p-2 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-600 hover:cursor-pointer"}`}
+                            className={`bg-blue-500 rounded-sm h-10 p-2 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-500 hover:cursor-pointer"}`}
                             disabled={!(dirty && isValid)}
                         >
                            {btnText}

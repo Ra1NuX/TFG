@@ -1,44 +1,19 @@
 import { Routes, Route, Navigate } from "react-router"
-import { useEffect, useState } from "react"
-import Dashboard from "./dashboard"
-import Chat from "./Chat"
-import Calendar from "./Calendar"
-import { auth } from "../firebase"
+import React from "react"
 
-export default function Content({...props}) {
-    const {size} = props 
+interface ContentProps {
+    handleData: Function,
+    routes: Array<{path:string, element:React.ReactElement, icon?:React.ReactElement|string, courses?:any, cts?: Function }>
+}
 
-    const [data , setData] = useState(null);
+export default function Content({routes, ...props}:ContentProps) {
 
-    const connectToServer = async (id:string, server?:string) => {
-        try{
 
-            const res = await fetch("http://127.0.0.1:3001/users-in", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Cors": "no-cors",
-                    'Access-Control-Allow-Origin': '*'
-                },
-                body: JSON.stringify({
-                    userName: auth.currentUser?.displayName,
-                    userId: auth.currentUser?.uid,
-                    id, 
-                })
-            })
-            let resdata = await res.json();
-            if(data == null && resdata ) setData(resdata);
-        }catch(e){
-            console.log(e)
-        }
-    }
-
-    return <div>
+    return <div className="p-5 grid-cols-2 overflow-auto">
             <Routes>
-                <Route path="/chat" element={<Chat courses={data}/>}/>
-                <Route path="/dashboard" element={<Dashboard data={data} cts={connectToServer}/>} />
-                <Route path="/calendar" element={<Calendar courses={data}/>}/>
-                <Route path="/drive" element={<Calendar />}/>
+                {routes.map((route, index) => (
+                <Route key={index} {...route} />
+                ))}
                 <Route path="/" element={<Navigate to="/dashboard"/>}/>
                 <Route path="*" element={<Navigate to="/dashboard"/>} />
             </Routes>

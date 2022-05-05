@@ -1,7 +1,7 @@
 import {auth } from "../firebase"
 
 import { FC, useState } from 'react'
-import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar'
+import { Calendar, dateFnsLocalizer, Event, CalendarProps } from 'react-big-calendar'
 import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop'
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
@@ -14,8 +14,7 @@ import startOfHour from 'date-fns/startOfHour'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-
-const Calendar_: FC = ({...props}) => {
+const Calendar_ = ({data, ...props}:any) => {
   const [events, setEvents] = useState<Event[]>([
     {
       title: 'Learn cool stuff',

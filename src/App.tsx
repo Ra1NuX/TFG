@@ -19,13 +19,14 @@ import { useDarkMode } from './hooks/useDarkMode';
 
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(auth.currentUser === null);
   const [isLoggedIn, setIsLogedIn] = useState(false);
   const [darkMode, setDarkMode] = useDarkMode()
 
 
   // Check if the window is fullScreen only one time when the application run. 
   useEffect(() => {
+    console.log(auth.currentUser)
     onAuthStateChanged(auth, (user => {
       setIsLoading(false);
       if (user != null) {
@@ -38,7 +39,7 @@ function App() {
   return isLoading
     ? 
     <div className='flex h-screen justify-center items-center bg-dark'>
-      <SyncLoader />
+      <div className='bg-transparent border-4 border-light border-r-blue-mid animate-spin w-10 h-10 rounded-full' />
     </div>
     :
     <div className='h-screen bg-dark'>

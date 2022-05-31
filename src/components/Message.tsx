@@ -14,7 +14,7 @@ interface MessageProps {
 export default function Message({ children, date, name, id }: MessageProps) {
     return (
         id === auth.currentUser?.uid ?
-            <div className="m-4 ml-auto w-11/12 md:w-fit md:max-w-[90%] bg-blue-600 rounded p-5 shadow-lg">
+            <div className="m-4 ml-auto w-11/12 md:w-fit md:max-w-[90%] bg-blue-mid rounded p-5 shadow-lg">
                 <span className="text-sm">
                     <pre className=" text-white whitespace-pre-wrap break-words overflow-auto leading-4 text-sm font-[Calibri]">
                         {children}

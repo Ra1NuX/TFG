@@ -9,7 +9,7 @@
         @apply relative mb-2 hover:cursor-pointer text-black font-semibold
     }
     .menuItem.active{
-        @apply relative !bg-bg-light dark:!bg-bg-dark select-none ml-2 rounded-l !text-blue-600
+        @apply relative !bg-light dark:!bg-bg-dark select-none ml-2 rounded-l text-black
     }
     .menuItem.active::before{
         content: '';
@@ -20,7 +20,7 @@
         height: 50px;
         border-radius: 15%;
         background-color: transparent;
-        box-shadow: 25px 25px 0px rgba(237 244 246);        
+        box-shadow: 25px 25px 0px rgb(249, 247, 247);        
     }
     .dark .menuItem.active::before{
         content: '';
@@ -42,7 +42,7 @@
         height: 50px;
         border-radius: 15%;
         background-color: transparent;
-        box-shadow: 25px -25px 0px rgba(237 244 246);        
+        box-shadow: 25px -25px 0px rgb(249, 247, 247);        
     }
     .dark .menuItem.active::after{
         content: '';
@@ -59,12 +59,12 @@
         content: '';
         position: absolute;
         left: 0;
-        top: 48px;
+        top: 40px;
         width: 50px;
         height: 50px;
         border-radius: 15%;
         background-color: transparent;
-        box-shadow: -25px -25px 0px rgba(37 99 235); 
+        box-shadow: -25px -25px 0px rgb(63, 114, 175); 
         z-index: 0;
     }
     .dark .topbar::before{
@@ -79,7 +79,13 @@
         box-shadow: -25px -25px 0px #1F2326; 
     }
     .menuItem.active a{
-        @apply !text-blue-600
+        @apply !text-blue-dark
+    }
+    .menuItem .pro-icon{
+        @apply !text-white
+    }
+    .menuItem.active .pro-icon{
+        @apply !text-blue-mid
     }
     .menuItem a{
         @apply !text-white
@@ -89,10 +95,11 @@
     }
 }
 
+span{
+    @apply text-[#112D4E]
+}
+
 @layer utilities {
-    .bg {
-        @apply bg-[#ff0000]
-    }
     .bg-dark{
         @apply bg-[#181a1e]
     }
@@ -107,16 +114,28 @@
     }
 }
 .pro-sidebar-inner {
-    @apply !bg-blue-600 dark:dark-card-bg
+    @apply !bg-blue-mid dark:dark-card-bg
 }
 #root{
     @apply h-full
+}
+.CircularProgressbar-path {
+    @apply !stroke-blue-mid;
+  }
+  .CircularProgressbar-trail {
+    @apply !stroke-blue-light;
+  }
+  .CircularProgressbar-text {
+    @apply !text-blue-dark;
+  }
+.active .pro-inner-item {
+    @apply !pl-2
 }
 .pro-inner-item{
     @apply !pl-3
 }
 .pro-icon-wrapper{
-    @apply dark:!white dark
+    @apply !bg-transparent
 }
 .pro-icon{
     @apply rounded p-0

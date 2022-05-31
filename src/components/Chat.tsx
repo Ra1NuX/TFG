@@ -6,10 +6,11 @@ import io, { Socket } from 'socket.io-client'
 import { auth } from '../firebase'
 
 import MessageList from "./MessageList"
+import ProfilePic from "./ProfilePic"
 
 
 // const SendedMessage = ({ date, children }) => (
-//     <div className="m-4 ml-auto w-11/12 md:w-fit md:max-w-[90%] bg-blue-600 rounded p-5 shadow-lg">
+//     <div className="m-4 ml-auto w-11/12 md:w-fit md:max-w-[90%] bg-blue-mid rounded p-5 shadow-lg">
 //         <span className="text-sm">
 //             <pre className=" text-white whitespace-pre-wrap break-words overflow-auto leading-4 text-sm font-[Calibri]">
 //                 {children}
@@ -21,7 +22,7 @@ import MessageList from "./MessageList"
 
 // const RecivedMessage = ({ date, name, children }) => (
 //     <div className="m-4 mr-auto w-11/12 md:w-fit md:max-w-[90%]  white dark:dark  rounded p-2 pt-1 shadow-lg">
-//         <span className="font-bold text-pink-500">{name}:</span>
+//         <span className="font-bold text--500">{name}:</span>
 //         <span className="text-sm  text-[#0a1254]">
 //             <pre className="whitespace-pre-wrap break-words overflow-auto leading-4 text-sm font-[Calibri]">
 //                 {children}
@@ -39,6 +40,7 @@ export default function Chat({ courses }: any) {
     const [socket, setSocket] = useState<Socket | null>(null)
     const [messages, setMessages] = useState<any>([])
     const inputRef = useRef<HTMLTextAreaElement>(null)
+    const [roomToConnect, setRoomToConnect] = useState<string>("")
 
     // const messageListener = (data: any) => {
     //     console.log('Acabo de recibir un mensaje', data.message, 'y esto es mi array:', messages)
@@ -75,35 +77,52 @@ export default function Chat({ courses }: any) {
     // }
 
     useEffect(() => {
+        
         if (!socket) {
             const sock = io('http://localhost:4400');
             setSocket(sock)
         } else {
-            socket.emit('register', { username: auth.currentUser?.displayName, userId: auth.currentUser?.uid, connectedAt: Date.now()})
-            const addMessage = (msg:any) => setMessages((prevMessages: any) =>  [...prevMessages, msg]);
+            if(!roomToConnect) return 
+            console.log('entrando en la sala', roomToConnect)
+            socket.emit('subscribe', { username: auth.currentUser?.displayName, userId: auth.currentUser?.uid, connectedAt: Date.now() }, roomToConnect)
+            const addMessage = (msg: any) => setMessages((prevMessages: any) => [...prevMessages, msg]);
             socket.on('messageSended', addMessage);
             () => {
                 socket.off('messageSended', addMessage)
             }
         }
-    }, [socket])
+    }, [socket,roomToConnect])
 
     const handlerMessage = () => {
         if (!socket) return
-        if(!inputRef.current?.value) return
-        socket.emit('message', { message: inputRef.current?.value, date: Date.now(), username: auth.currentUser?.displayName, userId: auth.currentUser?.uid }) 
+        if (!inputRef.current?.value) return
+        socket.emit('message', { message: inputRef.current?.value, date: Date.now(), username: auth.currentUser?.displayName, userId: auth.currentUser?.uid })
         inputRef.current.value = ""
+    }
+
+    const handleChangeRoom = (id:string) => {
+        if (!socket) return
+        if (roomToConnect) socket.emit('unsubscribe', roomToConnect)
+        setRoomToConnect(id)
     }
 
 
     return (
-        <div className="flex flex-col h-full relative card m-0 ml-2 !bg-[#eaeaea4f] p-2" >
-            <MessageList messages={messages} />
-            <div className="m-2 mt-4 flex flex-row align-middle shadow-lg">
-                <textarea ref={inputRef} className="w-full resize-none px-2 py-1 text-black rounded-tl rounded-bl text-sm" rows={2} placeholder="Mensaje...."></textarea>
-                <button type="submit" onClick={() => handlerMessage()} className="px-5 bg-blue-500 text-white font-bold rounded-tr rounded-br">
-                    <BsArrowReturnRight />
-                </button>
+        <div className="flex h-full w-full">
+            <div className="w-72 flex flex-col h-full ">
+                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("1")}>1</button>
+                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("2")}>2</button>
+                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("3")}>3</button>
+                
+            </div>
+            <div className="flex flex-col h-full w-full relative card m-0 ml-5 !bg-[#eaeaea4f] p-2" >
+                <MessageList messages={messages} />
+                <div className="m-2 mt-4 flex flex-row align-middle shadow-lg">
+                    <textarea ref={inputRef} className="w-full resize-none px-2 py-1 text-black rounded-tl rounded-bl text-sm" rows={2} placeholder="Mensaje...."></textarea>
+                    <button type="submit" onClick={() => handlerMessage()} className="px-5 bg-blue-mid text-white font-bold rounded-tr rounded-br">
+                        <BsArrowReturnRight />
+                    </button>
+                </div>
             </div>
         </div>
     )

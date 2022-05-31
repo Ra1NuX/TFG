@@ -27,7 +27,7 @@ interface SideBarProps {
 
 export default function Sidebar({ onCourse, routes }: SideBarProps) {
 
-    const [close, setClose] = useState(false)
+    const [close, setClose] = useState(true)
     const [uri, setUri] = useState("")
 
     let selectedLocation = useLocation().pathname
@@ -44,9 +44,8 @@ export default function Sidebar({ onCourse, routes }: SideBarProps) {
         location.reload();
     }
 
-    return <ProSidebar breakPoint="md" width={200} collapsedWidth={80} collapsed={close}>
-        <SidebarHeader>
-        <img src={logo} alt="logo" width={"70%"} />
+    return <ProSidebar breakPoint="md" width={200} collapsedWidth={60} collapsed={close}>
+        <SidebarHeader className="!border-b-0">
             <div className="flex pl-3 my-5 items-center ">
                 {/* <ProfilePic size={35} className="mr-3" /> */}
                 {/* {!close && <div className="font-semibold text-sm text-center self-center text-ellipsis overflow-hidden mr-1">{auth.currentUser?.displayName}</div>} */}

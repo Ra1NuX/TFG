@@ -6,7 +6,7 @@ import Dashboard from '../components/dashboard';
 import Chat from '../components/Chat';
 import Calendar from '../components/Calendar';
 import { auth } from "../firebase"
-import { FaAddressCard, FaCalendarAlt, FaComment } from 'react-icons/fa';
+import { FaAddressCard, FaCalendarAlt, FaComment, FaFolder } from 'react-icons/fa';
 import TopBar from '../components/TopBar';
 import ProfilePic from '../components/ProfilePic';
 import LightSwitch from '../components/LightSwitch';
@@ -43,28 +43,28 @@ const contentRoutes = [
     {
         path: "/dashboard",
         name: "Dashboard",
-        icon: <FaAddressCard />,
+        icon: <FaAddressCard size={20} />,
         element: <Dashboard data={data} cts={connectToServer} />,
         courseRequired: false
     },
     {
         path: "/chat",
         name: "Chat",
-        icon: <FaComment />,
+        icon: <FaComment size={20}/>,
         element: <Chat data={data} />,
         courseRequired: true,
     },
     {
         path: "/calendar",
         name: "Calendar",
-        icon: <FaCalendarAlt />,
+        icon: <FaCalendarAlt size={20}/>,
         element: <Calendar data={data} />,
         courseRequired: true
     },
     {
         path: "/drive",
         name: "Drive",
-        icon: <FaCalendarAlt />,
+        icon: <FaFolder size={20}/>,
         element: <Calendar data={data} />,
         courseRequired: true
     },
@@ -76,12 +76,11 @@ const contentRoutes = [
 
     return <div className='h-full flex '>
             <Sidebar onCourse={onCourse} routes={contentRoutes}/>
-            <div className='grid grid-rows-[48px] relative w-full bg-bg-light dark:bg-bg-dark '>
+            <div className='grid grid-rows-[40px] relative w-full bg-light dark:bg-bg-dark'>
                 <TopBar>
                     <LightSwitch/>
-                    <div>Ra1NuX</div>
+                    <div>{auth.currentUser?.displayName}</div>
                     <ProfilePic size={35} />
-                    
                 </TopBar>
                 <Content handleData={handleData} routes={contentRoutes}/> 
             </div>

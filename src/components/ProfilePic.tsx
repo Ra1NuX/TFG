@@ -36,7 +36,7 @@ export default function ProfilePic({ size = 150, clickable, className }: Profile
         <>
         <label htmlFor={randomId} className="flex w-fit">
         <div
-            className={`rounded-full border-2 border-transparent ${clickable && "cursor-pointer hover:scale-105 hover:border-violet-600"} ${className} `}
+            className={`rounded-full border-2 border-transparent ${clickable && "cursor-pointer hover:scale-105 hover:border-blue-mid"} ${className} `}
             style={{
                 width: size,
                 height: size,
@@ -45,7 +45,7 @@ export default function ProfilePic({ size = 150, clickable, className }: Profile
                 backgroundColor: "violet",
             }}
             />
-            {!imgURL && <div className="flex justify-center items-center font-bold text-violet-700">RN</div>}
+            {!imgURL && <div className="flex justify-center items-center font-bold text-blue-dark">RN</div>}
         </label>
         {clickable && <input type="file" id={randomId} className="hidden opacity-100" onChange={e => handleChangeFoto(e)}/>}
         </>

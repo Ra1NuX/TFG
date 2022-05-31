@@ -9,6 +9,9 @@ import ProfilePic from "./ProfilePic"
 import Input from "./Input"
 import { Formik } from "formik"
 import Card from "./Card"
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import ModalGeneral from "./ModalGeneral"
 
 
 export default function Dashboard({ ...props }) {
@@ -16,7 +19,7 @@ export default function Dashboard({ ...props }) {
     const { data, cts } = props
 
 
-    
+
 
 
     useEffect(() => {
@@ -46,35 +49,38 @@ export default function Dashboard({ ...props }) {
 
     return <DashboardLayout>
         <Card>
-            <ProfilePic clickable size={100} className="my-3"/>
-            <Input.Editable placeholder="Nombre completo" label="Nombre completo"/>
+            <ProfilePic clickable size={100}  />
+            <Input.Editable placeholder="Nombre completo" label="Nombre completo" />
             <div className="flex gap-2">
                 <div className="w-1/2">
-            <Input.Editable placeholder="DD/MM/AAAA (XX)" label="Fecha de nacimiento"/>
+                    <Input.Editable placeholder="DD/MM/AAAA (XX)" label="Fecha de nacimiento" />
+                    </div>
+                    <div className="w-1/2 ">
+                    <Input.Editable placeholder="Curso" label="Curso" />
+                </div>
             </div>
-            <div className="w-1/2">
-            <Input.Editable placeholder="Curso" label="Curso"/>
-            </div>
-            </div>
-            <Input.Editable placeholder="Provincia" label="Provincia"/>
-            <Input.Editable placeholder="Instituto" label="Instituto"/>
-            <Input.Editable placeholder="Email" label="Correo Electronico"/>
-            <Input.Editable placeholder="Teléfono" label="Teléfono"/>
+            <Input.Editable placeholder="Provincia" label="Provincia" />
+            <Input.Editable placeholder="Instituto" label="Instituto" />
+            <Input.Editable placeholder="Email" label="Correo Electronico" />
+            <Input.Editable placeholder="Teléfono" label="Teléfono" />
+            <ModalGeneral title="Por favor Ingrese el identificador de tu clase" description="(xxxx-xxxxx-xxxxx-xxxxx)" buttonText="abrir" >
+                <input />
+            </ModalGeneral>
 
         </Card>
 
         <div className="flex flex-col">
-        <Card/>
-        <div className="">
-        <Card className="w-4/5"/>
-        <Card/>
+            <Card ><CircularProgressbar className="h-24" strokeWidth={13} value={20} text={"20"}/></Card>
+            <div className="">
+                <Card className="w-4/5" />
+                <Card />
+            </div>
+
+            <Card />
+            <Card />
+
         </div>
-        
-        <Card/>
-        <Card/> 
-            
-        </div>
-        
+
     </DashboardLayout>
     // <div className="dashboard-main">
 

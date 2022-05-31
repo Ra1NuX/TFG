@@ -50,7 +50,7 @@ export default function Register() {
     return <Formik initialValues={initialValues} validationSchema={SignUpSchema} onSubmit={values => handleRegister(values)}>
         {formik => {
             const { errors, touched, isValid, dirty } = formik;
-            return <div className="flex flex-col h-full bg-blue-500 justify-center items-center">
+            return <div className="flex flex-col h-full bg-blue-mid justify-center items-center">
                 <LightSwitch />
                 <h1 className="font-bold text-white text-4xl border-b-2 rounded-sm px-2">REGISTRATE</h1>
                 <Form className="p-7 h-fit m-4 w-[90%] md:w-[420px] rounded bg-[#fafafa] shadow-md">
@@ -73,7 +73,7 @@ export default function Register() {
                     <div className="flex flex-col">
                         <button
                             type="submit"
-                            className={`bg-blue-500 rounded h-10 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-500 hover:cursor-pointer"}`}
+                            className={`bg-blue-mid rounded h-10 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-mid hover:cursor-pointer"}`}
                             disabled={!(dirty && isValid)}
                         >
                             Registrarse

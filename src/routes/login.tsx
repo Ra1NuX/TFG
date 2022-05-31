@@ -5,7 +5,7 @@ import LightContext from "../lightContext";
 
 import { BeatLoader } from "react-spinners";
 
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth'
 
 
 import { auth } from "../firebase";
@@ -30,7 +30,8 @@ export default function LogIn() {
     }
     const handleLogIn = ({email, password}: LoginProps) => {
         setBtnText( <BeatLoader size={10} color={"#ffffff"}/> )
-        signInWithEmailAndPassword(auth, email, password)
+        setPersistence(auth, browserLocalPersistence ).then(() => {
+            signInWithEmailAndPassword(auth, email, password)
         .then(credentials => {
             if(!credentials) return;
             alert('Logged in') 
@@ -38,6 +39,8 @@ export default function LogIn() {
         .catch(e => {
             setBtnText(<div>Inicia Sesión</div>)
         })
+        })
+        
     }
 
     const LogInWithGoogle = () => {
@@ -63,7 +66,7 @@ export default function LogIn() {
                             name="email"
                             id="email"
                             className={`border-b-2 p-2 rounded-sm py-2 ${errors.email ?
-                                "border-red-600 text-red-600" : "text-gray-400 border-blue-500"}`}
+                                "border-red-600 text-red-600" : "text-gray-400 border-blue-mid"}`}
                         />
                         <ErrorMessage name="email" component="span" className="text-red-600" />
                     </div>
@@ -75,7 +78,7 @@ export default function LogIn() {
                             name="password"
                             id="password"
                             className={`border-b-2 p-2 rounded-sm ${errors.password ?
-                                "border-red-600 text-red-600" : "text-gray-400 border-blue-500"}`}
+                                "border-red-600 text-red-600" : "text-gray-400 border-blue-mid"}`}
                         />
                         <ErrorMessage
                             name="password"
@@ -86,7 +89,7 @@ export default function LogIn() {
                     <div className="flex flex-col">
                         <button
                             type="submit"
-                            className={`bg-blue-500 rounded-sm h-10 p-2 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-500 hover:cursor-pointer"}`}
+                            className={`bg-blue-mid rounded-sm h-10 p-2 px-10 text-white font-semibold  ${!(dirty && isValid) ? "bg-gray-400" : "hover:bg-blue-mid hover:cursor-pointer"}`}
                             disabled={!(dirty && isValid)}
                         >
                            {btnText}

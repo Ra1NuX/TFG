@@ -2,7 +2,7 @@ import { updateEmail, updatePhoneNumber, updateProfile } from "firebase/auth";
 import { ErrorMessage, useField } from "formik"
 import { useEffect, useRef, useState } from "react";
 import { BsPencilFill } from "react-icons/bs";
-import { auth} from "../firebase";
+import { auth } from "../firebase";
 
 enum InputType {
 	email = "email",
@@ -35,61 +35,46 @@ export default function Input({ name, label, placeholder, required, ...props }: 
 	</>
 }
 
-Input.Editable = function Editable({ label, type, ...props }: InputProps) {
-	
+Input.Editable = function Editable({ label, type, placeholder, ...props }: InputProps) {
+
 	const inputRef = useRef<HTMLInputElement>(null)
 	const [isEditing, setIsEditing] = useState(false)
+	const [value, setValue] = useState(props.value)
 
 	const handleOnClickBtn = () => {
-			setIsEditing(true)
+		setIsEditing(true)
 	}
-	
+
+	const handleBlur = () => {
+		setValue(inputRef!.current!.value)
+		setIsEditing(false)
+	}
+
 
 	useEffect(() => {
-		if(!inputRef.current) return
-		if(!isEditing) {
+		if (!inputRef.current) return
+		if (!isEditing) {
+			console.log('no is edditing')
 			inputRef.current.disabled = true;
-		} 
+		}
 		else {
+			console.log("focus")
 			inputRef.current.disabled = false;
 			inputRef.current.focus()
-			const lastValue = inputRef.current.value
-			inputRef.current.onblur = () => {
-				
-				if(inputRef.current?.value.trim() === lastValue.trim()) return 
-				if(!inputRef.current) return
-				if(!auth.currentUser) return
 
-				switch(type) {
-					case InputType.email: {
-						updateEmail(auth.currentUser!, inputRef.current.value)
-					}
-					break;
-					case InputType.username: {
-						updateProfile(auth.currentUser!, { displayName: inputRef.current.value })
-					}
-					break;
-					// case InputType.phone: {
-					// 	updatePhoneNumber(auth.currentUser!, inputRef.current.value)
-					// }
-					// break;
-				}
 
-				setIsEditing(false)
-			}
 		}
 	}, [isEditing])
 
 
 
-
-	return <div className="relative"> 
-		<div className="flex flex-col">
-		{typeof label === "string" && <>
-			<span className="ml-3 mt-2 text-sm text-ellipsis overflow-hidden whitespace-nowrap">{label}</span>
-		</>}
-		<button onClick={() => handleOnClickBtn()} className="border-red-500 absolute inline right-2 bottom-4"><BsPencilFill size={13} /></button>
-		<input ref={inputRef} className="shadow-md border-b-2 border-blue-mid h-full p-2 rounded py-2 focus-within:outline-none overflow-y-clip focus-within:text-black" disabled {...props} />
-	</div>
+	return <div className="relative my-2">
+		<div className="flex flex-col relative h-full">
+			{typeof label === "string" && <>
+				<span className={`absolute top-[50%] ${(!isEditing && !value) ? "-translate-y-1/2" : "-translate-y-[150%]"}  transition-transform  ease-linear ml-3 text-sm text-ellipsis overflow-hidden whitespace-nowrap`}>{label}</span>
+			</>}
+			<button onClick={() => handleOnClickBtn()} className="border-red-500 absolute inline right-2 bottom-4"><BsPencilFill size={13} className={isEditing? "hidden" : "block"}/></button>
+			<input ref={inputRef} onBlur={() => handleBlur()} className="disabled:bg-white pr-8 shadow-md border-b-2 border-blue-mid h-full p-2 rounded py-2 focus-within:outline-none overflow-y-clip focus-within:text-black" disabled {...props} />
+		</div>
 	</div>
 }

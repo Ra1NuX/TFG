@@ -51,11 +51,11 @@ export default function Dashboard({ ...props }) {
         <Card>
             <ProfilePic clickable size={100}  />
             <Input.Editable placeholder="Nombre completo" label="Nombre completo" />
-            <div className="flex gap-2">
-                <div className="w-1/2">
+            <div className="grid md:grid-cols-2 gap-2">
+                <div className="">
                     <Input.Editable placeholder="DD/MM/AAAA (XX)" label="Fecha de nacimiento" />
                     </div>
-                    <div className="w-1/2 ">
+                    <div className="">
                     <Input.Editable placeholder="Curso" label="Curso" />
                 </div>
             </div>

@@ -9,6 +9,9 @@ module.exports = {
         "blue-dark": "#112D4E",
         "blue-light": "#DBE2EF",
         "blue-mid": "#3F72AF",
+      },
+      backgroundImage:{
+        'chat-img': "url('/images/bg.jpg')",
       }
     },
   },

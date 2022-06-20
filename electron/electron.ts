@@ -20,9 +20,18 @@ console.log('This application is running in development mode: ', isDev);
       minHeight:300,
       minWidth: 400,
       frame:true,
+      modal:true,
+      autoHideMenuBar:true,
+
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
-        devTools: isDev ? true : false
+        devTools: isDev ? true : false,
+        allowRunningInsecureContent: true,
+        nodeIntegration: true,
+        webSecurity: false,
+        nodeIntegrationInWorker: true,
+        webviewTag: true,
+        experimentalFeatures: true,
       }
     });
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../dist/index.html')}`);

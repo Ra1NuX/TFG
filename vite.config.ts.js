@@ -13,6 +13,7 @@ var vite_plugin_config_default = defineConfig({
 
 // vite.config.ts
 var vite_config_default = defineConfig2({
+  base: process.env.ELECTRON=="true" ? './' : ".",
   plugins: [
     react(),
     electron(vite_plugin_config_default)

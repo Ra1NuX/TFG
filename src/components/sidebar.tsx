@@ -1,18 +1,20 @@
 import { auth } from "../firebase"
 import { signOut } from "@firebase/auth"
-import { motion } from 'framer-motion'
-import { FaAddressCard, FaCalendarAlt, FaCog, FaComment, FaSignOutAlt } from 'react-icons/fa'
+import { FaCog, FaSignOutAlt } from 'react-icons/fa'
 
 import { Link, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
-import { ProSidebar, Menu, MenuItem, SubMenu, SidebarContent, SidebarFooter, SidebarHeader } from 'react-pro-sidebar';
+import { ProSidebar, Menu, MenuItem, SidebarContent, SidebarFooter, SidebarHeader } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { BsArrowRightShort } from "react-icons/bs";
+import MenuIcon from "./MenuIcon"
+import ProfilePic from "./ProfilePic";
+import { Socket } from "socket.io-client";
+import ConfirmModal from "./ConfirmModal";
 
-import logo from '../public/temporal-logo-dark.svg'
+
 
 interface SideBarProps {
-    onCourse: boolean,
+    data: any;
     routes: Array<{
         path: string,
         name: string,
@@ -21,92 +23,95 @@ interface SideBarProps {
         courses?: any,
         courseRequired?: boolean
     }>
+    sidebarOpen: boolean;
+    setSidebarOpen: () => void;
+    socket: Socket;
+    setConfirmModal: (value: boolean) => void;
 }
 
 
 
-export default function Sidebar({ onCourse, routes }: SideBarProps) {
+export default function Sidebar({ data, setConfirmModal, routes, sidebarOpen, setSidebarOpen, socket }: SideBarProps) {
 
-    const [close, setClose] = useState(true)
+
     const [uri, setUri] = useState("")
+    const [notifications, setNotifications] = useState<any>({})
+
+
 
     let selectedLocation = useLocation().pathname
+
+    useEffect(() => {
+
+        const setChatNotiNotification = (msg: any, subject: string, id: string) => {
+            if (auth.currentUser?.uid === id) return
+            setNotifications((notifications: any) => ({ ...notifications, Chat: notifications.Chat + 1 }))
+        }
+
+        const setCalendarNotiNotification = (id: string) => {
+            if (auth.currentUser?.uid === id) return
+            setNotifications((notifications: any) => ({ ...notifications, Calendario: notifications.Calendario + 1 }))
+        }
+
+
+        socket.on('messageSended', setChatNotiNotification)
+        socket.on('event-change-server', setCalendarNotiNotification)
+        return () => {
+            socket.off('messageSended', setChatNotiNotification)
+            socket.off('event-change-server', setCalendarNotiNotification)
+        }
+    }, [])
+
 
     useEffect(() => {
         setUri(selectedLocation)
     }, [selectedLocation])
 
-    console.log(uri)
 
-    const handleLogOut = () => {
-        if (!confirm('¿Estas seguro que quieres cerrar sesión?')) return;
-        signOut(auth);
-        location.reload();
-    }
 
-    return <ProSidebar breakPoint="md" width={200} collapsedWidth={60} collapsed={close}>
+    return <ProSidebar breakPoint="md" width={240} collapsedWidth={60} collapsed={!sidebarOpen} toggled={sidebarOpen} onToggle={setSidebarOpen}>
         <SidebarHeader className="!border-b-0">
-            <div className="flex pl-3 my-5 items-center ">
-                {/* <ProfilePic size={35} className="mr-3" /> */}
-                {/* {!close && <div className="font-semibold text-sm text-center self-center text-ellipsis overflow-hidden mr-1">{auth.currentUser?.displayName}</div>} */}
-                
-                
-                <motion.button className="-mr-1" animate={{
-                    rotate: !close ? 180 : 0,
-                    transition: { duration: 0.2 }
-                }} onClick={() => setClose(!close)}>
-                    <BsArrowRightShort size={"2em"}
-                    />
-                </motion.button>
-                
+            <div className="flex pl-3 my-7 items-center ">
+
+                <MenuIcon onClick={setSidebarOpen} className=" opacity-0 md:opacity-100" open={sidebarOpen} />
+
             </div>
         </SidebarHeader>
         <SidebarContent>
+            <div className="w-full" >
+                <div className={`py-4 mb-5 text-center  ${sidebarOpen ? "bg-white/20" : ""} rounded mx-2 transition-all ease-in-out`}>
+                    <ProfilePic className="drop-shadow" size={sidebarOpen ? 70 : 35} />
+                    {sidebarOpen && <div>
+                        <h2 className=" text-sm italic">Welcome</h2>
+                        <h3 className="text-2xl">{auth.currentUser?.displayName}</h3>
+                    </div>}
+                </div>
+            </div>
             <Menu iconShape="round">
                 {routes.map((route, index) => {
+                    if (!notifications.hasOwnProperty(route.name)) notifications[route.name] = 0
+                    if (notifications[route.name] != 0) uri === route.path && setNotifications((notifications: any) => ({ ...notifications, [route.name]: 0 }))
+
                     if (!route.courseRequired) {
-                        return <MenuItem active={uri === route.path} className={`menuItem ${close ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
+                        return <MenuItem active={uri === route.path} className={`menuItem ${!sidebarOpen ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
                     } else {
-                        return !onCourse && <MenuItem active={uri === route.path} className={`menuItem ${close ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
+                        return data && <MenuItem suffix={<span className={`bg-red-400/80 text-white flex justify-center items-center w-5 h-5 rounded-full text-xs ${notifications[route.name] == 0 ? "hidden" : ""}`}>{notifications[route.name]}</span>} active={uri === route.path} className={`menuItem ${!sidebarOpen ? "mr-0 before:!content-none after:!content-none" : ""}`} key={index} icon={route.icon} title={route.path}><Link to={route.path}>{route.name}</Link></MenuItem>
                     }
                 }
                 )}
             </Menu>
         </SidebarContent>
         <SidebarFooter className="!border-t-0">
-            <div className="hover:bg-gray-800 hover:cursor-pointer p-2 rounded m-px text-center" onClick={() => console.log("Configuracion")} >
-                <FaCog className="inline mb-1" /> {!close ? "Configuración" : ""}
-            </div>
-            <div className="hover:bg-red-800 hover:cursor-pointer p-2 rounded m-px text-red-600 hover:text-white text-center" onClick={() => handleLogOut()}>
-                <FaSignOutAlt className="inline mb-1" /> {!close ? "Sign Out" : ""}
+            <Link to={"/configuration"}>
+                <div className="hover:bg-gray-800/40 hover:cursor-pointer p-2 rounded m-px text-center" >
+                    <FaCog className="inline mb-1 overflow-hidden truncate !text-white " color="white" /> {sidebarOpen ? "Configuración" : ""}
+                </div>
+            </Link>
+
+            <div onClick={() => setConfirmModal(true)} className="hover:bg-red-800/80 hover:cursor-pointer p-2 m-px text-red-600 hover:text-white text-center">
+                <FaSignOutAlt className="inline mb-1 truncate" /> {sidebarOpen ? "Cerrar sesión" : ""}
             </div>
         </SidebarFooter>
-    </ProSidebar>
+    </ProSidebar >
 
-
-    // return <div className="absolute top-0 left-0 h-screen shadow-md bg-gray-900 overflow-hidden" style={{ width: size }}>
-
-    //     <div className={`flex flex-col ${!FullScreen ? "mt-9" : ""}`}>
-    //         <button onClick={() => onClose()}>x</button>
-    //         {!close ? () => {
-    //             return <><img src={auth.currentUser?.photoURL + ""} alt="" className="w-24 h-24 rounded-full m-auto my-5" />
-    //         <div className="font-semibold text-2xl text-center underline pb-5 border-b-[1px] mb-2 border-gray-700">{auth.currentUser?.displayName}</div>
-    //         <Link className="menuItem" to="/dashboard">Profile</Link>
-    //         {onCourse ? () => {
-    //             return <>
-    //                 <Link className="menuItem" to="/chat">Chat</Link>
-    //                 <Link className="menuItem" to="/calendar">Calendario</Link>
-    //                 <Link className="menuItem" to="/drive">Cajón</Link>
-    //             </>
-    //         } : null}
-    //         </>
-    //         }:null}
-    //     </div>
-
-
-    //     {!close ? () => { return <div style={{ position: "absolute", bottom: 0, fontFamily: "Poppins" }}>
-    //         <button className="hover:bg-gray-800 p-2" onClick={() => console.log("Configuracion")} style={{ width: size }}>Configuración</button>
-    //         <button className="hover:bg-red-800 p-2" onClick={() => { signOut(auth); location.href = "./" }} style={{ width: size }}>Sign Out</button>
-    //     </div> }: null}
-    // </div>
 }

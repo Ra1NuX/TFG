@@ -32,7 +32,7 @@ export default function Modal({ className="", buttonText="Open Dialog", title, d
             </button>
 
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={closeModal}>
+                <Dialog as="div" className="relative z-[1010]" onClose={closeModal}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -69,7 +69,7 @@ export default function Modal({ className="", buttonText="Open Dialog", title, d
 
                                     {children}
 
-                                    <button className='absolute top-2 right-2 text-red-600' onClick={() => closeModal()}>x</button>
+                                    <button className='absolute top-2 right-2 bg-red-600 w-5 h-5 rounded text-white flex justify-center items-center' onClick={() => closeModal()}>✕</button>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

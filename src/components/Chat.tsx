@@ -1,128 +1,190 @@
-import { formatDistanceToNow } from "date-fns/esm"
-import { es } from 'date-fns/locale'
+
 import { useEffect, useRef, useState } from "react"
 import { BsArrowReturnRight } from "react-icons/bs"
 import io, { Socket } from 'socket.io-client'
 import { auth } from '../firebase'
-
+import Loader from "./Loader"
 import MessageList from "./MessageList"
-import ProfilePic from "./ProfilePic"
+import { useThrottleFn } from "ahooks"
+import bg from "../images/bg.jpg"
 
 
-// const SendedMessage = ({ date, children }) => (
-//     <div className="m-4 ml-auto w-11/12 md:w-fit md:max-w-[90%] bg-blue-mid rounded p-5 shadow-lg">
-//         <span className="text-sm">
-//             <pre className=" text-white whitespace-pre-wrap break-words overflow-auto leading-4 text-sm font-[Calibri]">
-//                 {children}
-//             </pre>
-//             <p className="text-right text-xs italic text-[#eaeaea]">{formatDistanceToNow(new Date(date), { locale: es, addSuffix: true })}</p>
-//         </span>
-//     </div>
-// )
+let refs: any = {}
 
-// const RecivedMessage = ({ date, name, children }) => (
-//     <div className="m-4 mr-auto w-11/12 md:w-fit md:max-w-[90%]  white dark:dark  rounded p-2 pt-1 shadow-lg">
-//         <span className="font-bold text--500">{name}:</span>
-//         <span className="text-sm  text-[#0a1254]">
-//             <pre className="whitespace-pre-wrap break-words overflow-auto leading-4 text-sm font-[Calibri]">
-//                 {children}
-//             </pre>
-//             <p className="text-right text-xs italic text-gray-400">{formatDistanceToNow(new Date(date), { locale: es, addSuffix: true })}</p>
-//         </span>
-//     </div>
-// )
+export default function Chat({ data, socket, setSocket }: any) {
 
 
-
-export default function Chat({ courses }: any) {
-    // let inputRef = useRef<HTMLTextAreaElement>(null)
-
-    const [socket, setSocket] = useState<Socket | null>(null)
-    const [messages, setMessages] = useState<any>([])
+    const [messages, setMessages] = useState<any>(null)
     const inputRef = useRef<HTMLTextAreaElement>(null)
-    const [roomToConnect, setRoomToConnect] = useState<string>("")
-
-    // const messageListener = (data: any) => {
-    //     console.log('Acabo de recibir un mensaje', data.message, 'y esto es mi array:', messages)
-    //     setMessages([...messages, { key: uuidv4(), date: data.date, name: data.username, message: data.message }])
-    //     console.log('hlavni socket', messages)
-    // }
-
-    // useEffect(() => {
-    //     const sock = io('http://localhost:4400')
-    //     setSocket(sock)
-    // }, [])
-
-    // useEffect(() => {
-    //     if(!socket) return
-    //     console.log('mi socket es: ', socket)
-    //     socket.emit('register', { username: auth.currentUser?.displayName, userId: auth.currentUser?.uid, connectedAt: Date.now() })
-    //     socket.on('server-message', data => messageListener(data))
-    // }, [socket])
+    const [room, setRoom] = useState<string | null>(null)
+    const [subjects, setSubjects] = useState<any>(null)
+    const [Loading, setLoading] = useState<boolean>(true)
+    const [typing, setTyping] = useState<string | null>(null)
+    const [lastMessages, setLastMessages] = useState<any>(null)
 
 
 
-    // const sendMessage = () => {
-    //     if (!socket) return
-    //     const changedState = [...messages,{key: uuidv4(), date: Date.now(), message: text, self }]
-    //     console.log(changedState)
-    //     setMessages(changedState)
-    //     socket.emit('message', {
-    //         message: text,
-    //         date: Date.now(),
-    //         username: auth.currentUser?.displayName,
-    //     })
-    //     console.log('acabo de enviar un mensaje', messages)
-    //     setText('')
-    // }
+    function useForceUpdate(msg: any,) {
+        setMessages((msgs: any) => msgs.map((message: any) => message._id === msg._id ? message = msg : message))
+    }
+
+    const checkTheSubjects = async () => {
+        if (subjects) return
+        const res = await fetch(`http://127.0.0.1:4400/r/subjects/${data._id}`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cors': 'no-cors',
+                'Access-Control-Allow-Origin': '*'
+            }
+        })
+        const resdata = await res.json()
+
+        if (resdata.length > 0) {
+            setSubjects(resdata)
+        }
+    }
+
+
 
     useEffect(() => {
-        
-        if (!socket) {
-            const sock = io('http://localhost:4400');
-            setSocket(sock)
-        } else {
-            if(!roomToConnect) return 
-            console.log('entrando en la sala', roomToConnect)
-            socket.emit('subscribe', { username: auth.currentUser?.displayName, userId: auth.currentUser?.uid, connectedAt: Date.now() }, roomToConnect)
-            const addMessage = (msg: any) => setMessages((prevMessages: any) => [...prevMessages, msg]);
-            socket.on('messageSended', addMessage);
+
+        checkTheSubjects().then(
             () => {
-                socket.off('messageSended', addMessage)
+                setLoading(false)
             }
+        )
+
+    }, [])
+
+
+    useEffect(() => {
+
+        const addMessage = (msg: any, subject: string) => subject == room ?
+            setMessages((prevMessages: any) => [...prevMessages, msg.message])
+            :
+            refs[subject].lastChild.classList.contains('hidden') && refs[subject].lastChild.classList.remove("hidden")
+
+        const handlerTyping = (user: string, userId: string, troom: string) => {
+            if (userId === auth!.currentUser?.uid || room !== troom) return
+            setTyping(user)
+            setTimeout(() => {
+                setTyping(null)
+            }
+                , 2000)
         }
-    }, [socket,roomToConnect])
+
+        socket.on('messageSended', addMessage);
+        socket.on('deleteMessage', useForceUpdate);
+        socket.on('typing-server', handlerTyping)
+        return () => {
+            socket.off('messageSended', addMessage)
+            socket.off('deleteMessage', useForceUpdate)
+            socket.off('typing-server', handlerTyping)
+        }
+
+    }, [socket, room, refs])
+
+    const { run } = useThrottleFn((e: any) => {
+        if (e.target.value.length > 0) {
+            socket?.emit('typing', { username: auth.currentUser?.displayName, userId: auth.currentUser?.uid, connectedAt: Date.now(), room: room })
+        }
+    })
 
     const handlerMessage = () => {
         if (!socket) return
-        if (!inputRef.current?.value) return
-        socket.emit('message', { message: inputRef.current?.value, date: Date.now(), username: auth.currentUser?.displayName, userId: auth.currentUser?.uid })
+        if (!inputRef.current?.value.trim().normalize()) return
+        socket.emit('message', { message: inputRef.current?.value.trim().normalize(), date: Date.now(), FirebaseRef: auth.currentUser?.uid, roomId: data._id }, room)
         inputRef.current.value = ""
     }
 
-    const handleChangeRoom = (id:string) => {
-        if (!socket) return
-        if (roomToConnect) socket.emit('unsubscribe', roomToConnect)
-        setRoomToConnect(id)
+    const handleChangeOfRoom = async (subject: any) => {
+        if (subject !== room) setRoom(subject)
+        if (!refs[subject].lastChild.classList.contains('hidden')) refs[subject].lastChild.classList.add("hidden")
+        const messagesOfRoom = await fetch(`http://localhost:4400/m/get-messages/${subject}`, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cors': 'no-cors',
+                'Access-Control-Allow-Origin': '*'
+            }
+        })
+        const messagesOfRoomData = await messagesOfRoom.json()
+        setMessages(messagesOfRoomData.messages)
     }
 
+    const deleteMessage = async (messageId: string) => {
+        socket?.emit('deleteMessage', { messageId, roomId: room })
+    }
 
-    return (
-        <div className="flex h-full w-full">
-            <div className="w-72 flex flex-col h-full ">
-                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("1")}>1</button>
-                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("2")}>2</button>
-                <button className="py-2 my-2 border-0 shadow-md rounded hover:shadow-orange-400" onClick={() => handleChangeRoom("3")}>3</button>
+    const getTheElement = (subjectId: string): any => {
+        let target;
+        subjects.forEach((element: any) => {
+            if (element._id === subjectId) {
+                target = element
+            }
+        });
+        return target ? target : null
+    }
+
+    const getLastMessage = async (subId: string) => {
+        const res = await fetch(`http://localhost:4400/m/get-first-message`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cors': 'no-cors',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({ subject: subId, room: data._id })
+        })
+        const resData = await res.json()
+
+
+        setLastMessages((currentMessages:any) => ({ ...currentMessages, [subId]: resData.message }))
+
+    }
+
+    useEffect(() => {
+        data.Subjects.forEach((subject: any) => {
+            getLastMessage(subject)
+        })
+    }, [])
+
+    return (Loading || !lastMessages) ? <Loader /> : (
+        <div className="flex h-full w-full relative">
+            <div className="w-72 flex flex-col h-full divide-y" id="subjectInChat">
+                {data.Subjects.map((subject: any, i: number) => {
+                    return <button key={i} ref={ref => refs[subject] = ref} id={subject} className={`${subject === room ? "bg-blue-100/50 dark:bg-gray-700 rounded-l" : ""} ml-2 py-2 relative border-0 px-4 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 `} onClick={() => handleChangeOfRoom(subject)}>
+                        <div className="text-left">{getTheElement(subject).Name}</div>
+                        <div className={`text-gray-500 text-xs my-2 mx-5  px-2 border-l  ${subject === room ? "border-l-blue-dark border-l-2" : "border-l-gray-300"} `}>
+                        {lastMessages[subject]?.SendBy && <span className="block text-left font-semibold text-base">{lastMessages[subject] && lastMessages[subject].SendBy.FirebaseRef === auth.currentUser?.uid ? "Tu" : lastMessages[subject].SendBy.Username}:</span>}
+                            <span className="block text-gray-500 text-left pl-2">{lastMessages[subject] && lastMessages[subject].Content}</span>
+                            </div>
+                        <div className="hidden">
+                            <div className="w-4 h-4 absolute top-0 right-0 translate-x-1/2 rounded-full -translate-y-1/2 bg-red-500/50 animate-pulse"></div>
+                            <div className="w-3 h-3 absolute top-0 right-0 translate-x-1/2 rounded-full -translate-y-1/2 bg-red-500 "></div>
+                        </div>
+                    </button>
+                })}
                 
             </div>
-            <div className="flex flex-col h-full w-full relative card m-0 ml-5 !bg-[#eaeaea4f] p-2" >
-                <MessageList messages={messages} />
-                <div className="m-2 mt-4 flex flex-row align-middle shadow-lg">
-                    <textarea ref={inputRef} className="w-full resize-none px-2 py-1 text-black rounded-tl rounded-bl text-sm" rows={2} placeholder="Mensaje...."></textarea>
-                    <button type="submit" onClick={() => handlerMessage()} className="px-5 bg-blue-mid text-white font-bold rounded-tr rounded-br">
-                        <BsArrowReturnRight />
-                    </button>
-                </div>
+            <div className="flex flex-col h-full w-full relative m-0 pl-10 bg-blue-100/50 dark:bg-gray-700 p-2" >
+                {!room && <div className="h-full rounded inset-0" style={{ backgroundImage: `url(${bg})` }}>
+                    <div className="inset-0 bg-blue-mid/80 absolute text-white rounded backdrop-blur-sm">
+                        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">Bienvenido/a al chat de tu clase.</span>
+                    </div>
+                </div>}
+                {Array.isArray(messages) && <>
+                    <MessageList messages={messages} data={data} deleteMessage={deleteMessage} />
+                    <div className="m-2 mt-4 flex flex-row align-middle shadow-lg relative">
+                        {typing && <span className="absolute top-0 left-2 -translate-y-7">{typing} esta escribiendo...</span>}
+                        <textarea onChange={run} ref={inputRef} className="w-full resize-none px-2 py-1 text-black rounded-tl rounded-bl text-sm dark:bg-gray-500" rows={2} placeholder="Mensaje...."></textarea>
+                        <button type="submit" onClick={() => handlerMessage()} className="px-5 bg-blue-mid text-white font-bold rounded-tr rounded-br">
+                            <BsArrowReturnRight />
+                        </button>
+                    </div>
+                </>
+                }
             </div>
         </div>
     )

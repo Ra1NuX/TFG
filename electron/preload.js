@@ -3,11 +3,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 const { Titlebar } = require( "custom-electron-titlebar");
 require('dotenv').config()
 
-window.addEventListener('DOMContentLoaded', () => {
-  // Title bar implemenation
-  new Titlebar();
-});
-
 const onClose = () => ipcRenderer.send('on-close');
 const onMinimize = () => ipcRenderer.send('on-minimize');
 const onMaximize = () => ipcRenderer.send('on-maximize');

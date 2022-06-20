@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { BsMoonStarsFill, BsSunFill } from 'react-icons/bs'
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { VscChromeMaximize } from 'react-icons/vsc'
-import { SyncLoader } from 'react-spinners';
 
-
+import Cookies from 'js-cookie';
 
 import { auth } from './firebase';
 import { onAuthStateChanged } from '@firebase/auth';
+
+declare global {
+  interface Window{handler:any}
+}
+
 
 // import './default.css';
 // import "./lightmode";
@@ -15,18 +17,19 @@ import Main from "./routes/Main"
 import LogIn from "./routes/Login"
 import Register from "./routes/Register"
 import VerifyEmail from './routes/Verify'
-import { useDarkMode } from './hooks/useDarkMode';
+import CookieBanner from 'react-cookie-banner/lib';
+import CookiesPage from './routes/CookiesPage';
+import Loader from './components/Loader';
 
 
 function App() {
   const [isLoading, setIsLoading] = useState(auth.currentUser === null);
   const [isLoggedIn, setIsLogedIn] = useState(false);
-  const [darkMode, setDarkMode] = useDarkMode()
+  const [acceptCookies, setAcceptCookies] = useState<any>(Cookies.get('user-has-accepted-cookies'));
 
 
   // Check if the window is fullScreen only one time when the application run. 
   useEffect(() => {
-    console.log(auth.currentUser)
     onAuthStateChanged(auth, (user => {
       setIsLoading(false);
       if (user != null) {
@@ -38,16 +41,29 @@ function App() {
 
   return isLoading
     ? 
-    <div className='flex h-screen justify-center items-center bg-dark'>
-      <div className='bg-transparent border-4 border-light border-r-blue-mid animate-spin w-10 h-10 rounded-full' />
-    </div>
+    <Loader/>
     :
     <div className='h-screen bg-dark'>
+      
+      <CookieBanner
+      message="OpenClass-TFG usa cookies para mejorar tu experiencia. Para continuar navegando, acepta nuestra"
+      link={<a href="/#/cookies">Política de cookies</a>}
+      dismissOnScroll={false}
+      onAccept={() => {setAcceptCookies(true)}}
+      cookie="user-has-accepted-cookies" />
+
       <HashRouter>
         <Routes>
+        {!acceptCookies && <>
+        <Route path="cookies" element={<CookiesPage />}  />
+        </>}
+        {acceptCookies && 
+        <>
           <Route path="/*" element={!isLoggedIn ? <Navigate to="login" /> : !auth.currentUser?.emailVerified ? <VerifyEmail /> : <Main />} />
           <Route path="login" element={isLoggedIn ? <Navigate to="/" /> : <LogIn />} />
           <Route path="register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
+          </>
+        }
         </Routes>
       </HashRouter>
     </div>

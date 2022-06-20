@@ -1,5 +1,5 @@
 # TITULO:
-  OpenClass-PI
+  OpenClass-TFG
 ## AUTOR: 
   Raimundo Martínez Núñez
   
